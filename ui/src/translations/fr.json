@@ -1612,7 +1612,8 @@
         "email": "E-mail",
         "firstName": "Prénom",
         "lastName": "Nom de famille",
-        "password": "Mot de passe"
+        "password": "Mot de passe",
+        "password_requirements": "Password must be at least 8 characters long and include at least 1 uppercase letter and 1 number."
       },
       "login": "Connexion",
       "logout": "Déconnexion",
