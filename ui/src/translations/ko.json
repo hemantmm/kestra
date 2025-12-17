@@ -1612,7 +1612,8 @@
         "email": "이메일",
         "firstName": "이름",
         "lastName": "성씨",
-        "password": "비밀번호"
+        "password": "비밀번호",
+        "password_requirements": "Password must be at least 8 characters long and include at least 1 uppercase letter and 1 number."
       },
       "login": "로그인",
       "logout": "로그아웃",
