@@ -1612,7 +1612,8 @@
         "email": "Email",
         "firstName": "Nome",
         "lastName": "Sobrenome",
-        "password": "Senha"
+        "password": "Senha",
+        "password_requirements": "Password must be at least 8 characters long and include at least 1 uppercase letter and 1 number."
       },
       "login": "Login",
       "logout": "Sair",
