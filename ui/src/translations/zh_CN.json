@@ -1612,7 +1612,8 @@
         "email": "电子邮件",
         "firstName": "名字",
         "lastName": "姓氏",
-        "password": "密码"
+        "password": "密码",
+        "password_requirements": "Password must be at least 8 characters long and include at least 1 uppercase letter and 1 number."
       },
       "login": "登录",
       "logout": "注销",
