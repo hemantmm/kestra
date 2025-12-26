@@ -1612,7 +1612,8 @@
         "email": "メール",
         "firstName": "名",
         "lastName": "姓",
-        "password": "パスワード"
+        "password": "パスワード",
+        "password_requirements": "Password must be at least 8 characters long and include at least 1 uppercase letter and 1 number."
       },
       "login": "ログイン",
       "logout": "ログアウト",
