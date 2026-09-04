@@ -22,6 +22,7 @@ import {defaultNamespace} from "../composables/useNamespaces"
 import {useApiStore} from "./api"
 import {flowTaskStats, isExampleFlow, primaryTriggerType} from "../utils/analytics/activation"
 import type {KestraRequestOptions} from "../utils/kestraHttp"
+import {splitValidationErrors} from "../utils/validationErrors"
 
 const textYamlHeader = {
     headers: {
@@ -434,13 +435,19 @@ export const useFlowStore = defineStore("flow", () => {
         })
     }
 
-    let latestFlowLoad = 0
+    // Tracks the flow the user is currently navigating to, so a load for a flow they have since
+    // moved away from can be dropped without an unrelated caller's own load for the *same* flow
+    // (e.g. Topology.vue re-syncing in the background) being able to drop it too (#10722).
+    let latestFlowLoadKey: string | undefined
 
     async function loadFlow(
         options: { namespace: string, id: string, revision?: string, allowDeleted?: boolean, source?: boolean, store?: boolean, deleted?: boolean },
         requestOptions?: KestraRequestOptions,
     ) {
-        const load = options.store === false ? undefined : ++latestFlowLoad
+        const key = `${options.namespace}/${options.id}`
+        if (options.store !== false) {
+            latestFlowLoadKey = key
+        }
         let data: Flow & {exception?: string}
         try {
             data = await FlowsAPI.flow({
@@ -457,9 +464,9 @@ export const useFlowStore = defineStore("flow", () => {
             throw e
         }
 
-        // A load the user has navigated away from must not become the flow on screen, the same way a
-        // superseded search is dropped in `stores/logs.ts`.
-        if (options.store === false || load !== latestFlowLoad) {
+        // A load for a flow the user has navigated away from must not become the flow on screen,
+        // the same way a superseded search is dropped in `stores/logs.ts`.
+        if (options.store === false || key !== latestFlowLoadKey) {
             return data
         }
 
@@ -911,8 +918,7 @@ function deleteFlowAndDependencies() {
                 ? [`${t(key + ".description")} ${t(key + ".details")}`]
                 : []
 
-        const constraintsError =
-            flowValidation.value?.constraints?.split(/, ?/) ?? []
+        const constraintsError = splitValidationErrors(flowValidation.value?.constraints)
 
         const errors = [...flowExistsError, ...constraintsError]
 
@@ -1007,6 +1013,7 @@ function deleteFlowAndDependencies() {
         deleteFlow,
         loadGraph,
         loadGraphFromSource,
+        fetchGraph,
         getGraphFromSourceResponse,
         loadRevisions,
         loadFlowStats,
